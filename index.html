@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reservasi Meja · Ramadan 1446 H</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0e0b;--surface:#1a1814;--card:#221f1a;--border:#2e2b25;--av:#c8a96e;--oc:#8b3a3a;--text:#f0ead6;--muted:#7a7060;--accent:#c8a96e;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.3;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");}
+
+/* HEADER */
+header{padding:1.5rem 2rem;border-bottom:1px solid var(--border);text-align:center;}
+.brand h1{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.2rem);color:var(--accent);}
+.brand p{font-size:.7rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:.4rem;}
+
+/* INFO BAR */
+.info-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:1.2rem 2rem;text-align:center;}
+.info-bar p{font-size:.85rem;color:var(--muted);margin-bottom:1rem;}
+.kontak-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--av);color:#0f0e0b;padding:.8rem 1.8rem;border-radius:30px;text-decoration:none;font-size:.95rem;font-weight:600;transition:all .2s;}
+.kontak-btn:hover{background:#d4b87a;transform:translateY(-2px);}
+.menu-btn{display:inline-flex;align-items:center;gap:.5rem;background:transparent;border:1px solid var(--av);color:var(--av);padding:.8rem 1.8rem;border-radius:30px;text-decoration:none;font-size:.95rem;margin-left:.5rem;transition:all .2s;}
+.menu-btn:hover{background:rgba(200,169,110,.1);}
+
+/* CALENDAR */
+.cal-wrap{max-width:900px;margin:2rem auto;padding:0 1.5rem 6rem;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.cal-header h2{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--accent);}
+.cal-nav{display:flex;gap:.4rem;}
+.cal-nav button{background:var(--card);border:1px solid var(--border);color:var(--text);padding:.4rem .85rem;border-radius:3px;cursor:pointer;font-size:.85rem;font-family:'DM Sans',sans-serif;transition:border-color .15s;}
+.cal-nav button:hover{border-color:var(--accent);}
+.cal-grid{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);}
+.cal-days-header span{text-align:center;padding:.55rem;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.cal-body{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);min-height:110px;padding:.5rem;cursor:default;transition:background .15s;}
+.cal-cell:nth-child(7n){border-right:none;}
+.cal-cell.past{opacity:.35;background:rgba(0,0,0,.1);}
+.cal-cell.today .day-num{color:var(--accent);font-weight:700;}
+/* Status colors */
+.cal-cell.status-low{background:rgba(200,169,110,.05);}
+.cal-cell.status-med{background:rgba(200,150,50,.1);}
+.cal-cell.status-high{background:rgba(139,58,58,.15);}
+.cal-cell.status-full{background:rgba(139,58,58,.25);}
+.day-num{font-size:.9rem;font-family:'Playfair Display',serif;line-height:1;margin-bottom:.3rem;}
+/* Progress bar */
+.cal-progress{width:100%;height:6px;background:var(--border);border-radius:3px;margin:.4rem 0;overflow:hidden;}
+.cal-progress-bar{height:100%;background:var(--av);border-radius:3px;transition:width .3s;}
+.cal-progress-bar.med{background:#d4a84a;}
+.cal-progress-bar.high{background:#e07070;}
+.cal-status{font-size:.65rem;color:var(--muted);text-align:center;margin-top:.2rem;font-weight:500;}
+.cal-status.med{color:#d4a84a;}
+.cal-status.high{color:#e07070;}
+.cal-status.full{color:#e07070;font-weight:700;}
+/* Legend */
+.cal-legend{display:flex;justify-content:center;gap:1.5rem;margin-top:1.5rem;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--muted);}
+.legend-dot{width:12px;height:12px;border-radius:2px;}
+.dot-low{background:rgba(200,169,110,.3);}
+.dot-med{background:#d4a84a;}
+.dot-high{background:#e07070;}
+
+/* FOOTER */
+footer{text-align:center;padding:2rem;font-size:.7rem;color:var(--muted);letter-spacing:.1em;border-top:1px solid var(--border);}
+
+/* FLOATING ADMIN BUTTON - POJOK KANAN BAWAH */
+.admin-fab{position:fixed;bottom:1.5rem;right:1.5rem;z-index:1000;}
+.admin-fab a{display:flex;align-items:center;justify-content:center;width:56px;height:56px;background:var(--card);border:1px solid var(--border);border-radius:50%;color:var(--muted);text-decoration:none;font-size:1.3rem;transition:all .2s;box-shadow:0 4px 12px rgba(0,0,0,.3);}
+.admin-fab a:hover{background:var(--surface);border-color:var(--accent);color:var(--accent);transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.admin-fab span{position:absolute;right:70px;background:var(--card);border:1px solid var(--border);padding:.4rem .8rem;border-radius:4px;font-size:.7rem;color:var(--muted);white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;}
+.admin-fab:hover span{opacity:1;right:75px;}
+
+@media(max-width:600px){
+  header{padding:1.2rem 1rem;}
+  .info-bar{padding:1rem;}
+  .kontak-btn,.menu-btn{display:block;width:100%;margin:.3rem 0;}
+  .cal-wrap{padding:0 .8rem 5rem;}
+  .cal-cell{min-height:90px;padding:.4rem;}
+  .cal-header h2{font-size:1.1rem;}
+  .admin-fab{bottom:1rem;right:1rem;}
+  .admin-fab a{width:48px;height:48px;font-size:1.1rem;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>Reservasi Meja</h1>
+    <p>Ramadan 1446 H · Tea Co & Resto</p>
+  </div>
+</header>
+
+<div class="info-bar">
+  <p>&#128205; Konfirmasi ketersediaan meja & hubungi admin untuk reservasi</p>
+  <a href="https://wa.me/628112777555" class="kontak-btn" target="_blank">
+    &#128172; Hubungi Admin WhatsApp
+  </a>
+  <a href="https://drive.google.com/file/d/1u-eJ2L6tk4EruWzmkm-bc_rLIZ8vog81/view?usp=drivesdk" class="menu-btn" target="_blank">
+    &#127860; Lihat Menu
+  </a>
+</div>
+
+<div class="cal-wrap">
+  <div class="cal-header">
+    <h2 id="cal-month-label"></h2>
+    <div class="cal-nav">
+      <button id="cal-prev">&#8249;</button>
+      <button id="cal-today">Hari Ini</button>
+      <button id="cal-next">&#8250;</button>
+    </div>
+  </div>
+  <div class="cal-grid">
+    <div class="cal-days-header">
+      <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+    </div>
+    <div class="cal-body" id="cal-body"></div>
+  </div>
+  
+  <div class="cal-legend">
+    <div class="legend-item"><div class="legend-dot dot-low"></div> Tersedia (&lt;50%)</div>
+    <div class="legend-item"><div class="legend-dot dot-med"></div> Ramai (50-79%)</div>
+    <div class="legend-item"><div class="legend-dot dot-high"></div> Hampir Penuh (80-99%)</div>
+    <div class="legend-item"><div class="legend-dot dot-high" style="background:#8b3a3a;"></div> Penuh (100%)</div>
+  </div>
+</div>
+
+<footer>
+  <p>Reservasi Meja · Ramadan 1446 H</p>
+</footer>
+
+<!-- TOMBOL ADMIN - POJOK KANAN BAWAH -->
+<div class="admin-fab">
+  <span>Admin Login</span>
+  <a href="admin.html" title="Admin Login">&#9881;</a>
+</div>
+
+<script>
+// ================================================================
+//  CONFIG
+// ================================================================
+const MAX_KAPASITAS = 60;
+const SUPABASE_URL='https://ugobauwqlonyepldrvfn.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVnb2JhdXdxbG9ueWVwbGRydmZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwMDQwNjcsImV4cCI6MjA4NzU4MDA2N30.56Vv1HJDK5ygTUlf68BIslr-nznOb5sVUq5gjz_5CI8';
+
+// ================================================================
+//  SUPABASE
+// ================================================================
+const SBH={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY};
+const sb={
+  async get(t,q=''){const r=await fetch(SUPABASE_URL+'/rest/v1/'+t+'?'+q,{headers:SBH});const b=await r.json();if(!r.ok)throw new Error(b.message||b.hint||JSON.stringify(b));return b;}
+};
+
+// ================================================================
+//  STATE
+// ================================================================
+const TODAY=new Date();
+let calYear=TODAY.getFullYear(),calMonth=TODAY.getMonth();
+const BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function p2(n){return String(n).padStart(2,'0');}
+function mkdk(y,m,d){return y+'-'+p2(m+1)+'-'+p2(d);}
+
+// ================================================================
+//  KALENDER - VIEW ONLY
+// ================================================================
+async function renderCal(){
+  document.getElementById('cal-month-label').textContent=BULAN[calMonth]+' '+calYear;
+  const body=document.getElementById('cal-body');
+  body.innerHTML='<div style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--muted);">Memuat...</div>';
+  
+  const s=calYear+'-'+p2(calMonth+1)+'-01';
+  const e=calYear+'-'+p2(calMonth+1)+'-'+p2(new Date(calYear,calMonth+1,0).getDate());
+  
+  let resData = {};
+  try {
+    const rows = await sb.get('reservasi', `tanggal=gte.${s}&tanggal=lte.${e}&select=tanggal,jumlah_tamu`);
+    rows.forEach(r => {
+      if (!resData[r.tanggal]) resData[r.tanggal] = { count: 0, pax: 0 };
+      resData[r.tanggal].count++;
+      resData[r.tanggal].pax += (r.jumlah_tamu || 0);
+    });
+  } catch(e) {
+    console.error('Error:', e);
+  }
+
+  const first=new Date(calYear,calMonth,1).getDay();
+  const days=new Date(calYear,calMonth+1,0).getDate();
+  const tstr=TODAY.getFullYear()+'-'+p2(TODAY.getMonth()+1)+'-'+p2(TODAY.getDate());
+  
+  body.innerHTML='';
+  
+  for(let i=0;i<first;i++){
+    const c=document.createElement('div');
+    c.className='cal-cell empty';
+    body.appendChild(c);
+  }
+  
+  for(let d=1;d<=days;d++){
+    const dstr=mkdk(calYear,calMonth,d);
+    const isPast=new Date(calYear,calMonth,d) < new Date(TODAY.getFullYear(),TODAY.getMonth(),TODAY.getDate());
+    const data = resData[dstr] || { count: 0, pax: 0 };
+    const persen = Math.min(100, Math.round((data.pax / MAX_KAPASITAS) * 100));
+    
+    let statusClass = 'status-low';
+    let progressClass = '';
+    let statusText = 'Tersedia';
+    let statusClassText = '';
+    
+    if (persen >= 100) {
+      statusClass = 'status-full';
+      progressClass = 'high';
+      statusText = 'PENUH';
+      statusClassText = 'full';
+    } else if (persen >= 80) {
+      statusClass = 'status-high';
+      progressClass = 'high';
+      statusText = 'Hampir Penuh';
+      statusClassText = 'high';
+    } else if (persen >= 50) {
+      statusClass = 'status-med';
+      progressClass = 'med';
+      statusText = 'Ramai';
+      statusClassText = 'med';
+    }
+    
+    const cell=document.createElement('div');
+    cell.className='cal-cell '+statusClass+(isPast?' past':'')+(dstr===tstr?' today':'');
+    
+    cell.innerHTML = 
+      '<div class="day-num">' + d + '</div>' +
+      '<div class="cal-progress">' +
+        '<div class="cal-progress-bar '+progressClass+'" style="width:'+persen+'%"></div>' +
+      '</div>' +
+      '<div class="cal-status '+statusClassText+'">' + persen + '%<br>' + statusText + '</div>';
+    
+    body.appendChild(cell);
+  }
+}
+
+// ================================================================
+//  EVENTS
+// ================================================================
+document.getElementById('cal-prev').addEventListener('click',()=>{calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCal();});
+document.getElementById('cal-next').addEventListener('click',()=>{calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCal();});
+document.getElementById('cal-today').addEventListener('click',()=>{calYear=TODAY.getFullYear();calMonth=TODAY.getMonth();renderCal();});
+
+// ================================================================
+//  INIT
+// ================================================================
+renderCal();
+</script>
+</body>
+</html>
